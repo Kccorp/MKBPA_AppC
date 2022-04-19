@@ -45,9 +45,9 @@ void parseJson(char *file_name) {
 
     //parse the json
     parsed_json = json_tokener_parse(buffer);
-    json_object_object_get_ex(parsed_json, "description", &description);
-    json_object_object_get_ex(parsed_json, "icon", &icon);
-    json_object_object_get_ex(parsed_json, "temp", &temp_obj);
+    json_object_object_get_ex(parsed_json, "main", &description);
+    json_object_object_get_ex(parsed_json, "base", &icon);
+    json_object_array_get_idx(parsed_json, 0);
     //extract the data
     printf("%s\n", json_object_to_json_string(description));
     printf("%s\n", json_object_to_json_string(icon));
