@@ -46,32 +46,31 @@ void parseJson(char *file_name,double *t, char *w, char *i){
     json_object_object_get_ex(temp, "description", &description);
     json_object_object_get_ex(temp, "icon", &icon);
 
-
-    *i = json_object_get_string(icon);
+    //convert the json object to string
+    strcpy(i, json_object_get_string(icon));
+    strcpy(w, json_object_get_string(description));
+    // we put inside a temp named p a string then atof to store it in a double
     p = json_object_get_string(temperature);
-    *w = json_object_get_string(description);
-    printf("%s\n", i);
-    printf("%s\n", p);
-    printf("%s\n", w);
     *t = atof(p);
-    printf("%lf\n", *t);
+    //for free the memory
     json_object_put(parsed_json);
-
-
-
 
 }
 
 int main() {
     char *filename = "../http.txt"; //path from current dir
-    double *temp = 0;
-    char *weather ="";
-    char *iconId ="";
+    double temp = 0;
+    char *weather = malloc(sizeof(char)*100);
+    char *iconId = malloc(sizeof(char)*4);
+
 
     get_page( "https://api.openweathermap.org/data/2.5/weather?q=Lyon&appid=a74be1f8fd103c83ce4e4c545a33c915&units=metric&lang=fr&mode=json", filename ) ;
-    parseJson(filename,temp,weather,iconId);
-    printf("%s\n", weather);
-    printf("%s\n", iconId);
-    printf("%lf\n", *temp);
+    parseJson(filename,&temp,weather,iconId);
+    printf("weather %s\n", weather);
+    printf("iconId %s\n", iconId);
+    printf("how hot i am ? %.2lf\n", temp);
+
+    free(weather);
+    free(iconId);
     return 0;
 }
