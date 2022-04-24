@@ -15,10 +15,10 @@ void connectBD (int *state, MYSQL *conn){
 
     conn=mysql_real_connect(conn,"ilzyz0heng1bygi8.chr7pe7iynqr.eu-west-1.rds.amazonaws.com","zi079ph5hsli9dsz","uesgcm2e869kdo87","m6qku2mxgghdq37a",3306,NULL,0);
     if (conn) {
-        printf("\033[0;34mConnection success! \033[0m\n");
+//        printf("\033[0;34mConnection success! \033[0m\n");
         *state = 1;
     }else{
-        printf("\033[0;31mConnection failed! \033[0m\n");
+//        printf("\033[0;31mConnection failed! \033[0m\n");
         *state = 0;
     }
 }

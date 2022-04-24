@@ -24,12 +24,12 @@ void newUser(GtkWidget *widget, gpointer user_data){
         strlen((char *)gtk_entry_get_text(GTK_ENTRY(inputname))) <= 0 ||
         strlen((char *)gtk_entry_get_text(GTK_ENTRY(inputname))) <= 3    ){
 
-        gtk_label_set_text(GTK_LABEL(resultPseudo), "pseudo non conforme");
+        gtk_label_set_text(GTK_LABEL(resultPseudo), "Email non conforme");
         check = 0;
 
     } else if (strlen((char *)gtk_entry_get_text(GTK_ENTRY(inputname))) <= 25 && strlen((char *)gtk_entry_get_text(GTK_ENTRY(inputname))) > 3){
 
-        gtk_label_set_text(GTK_LABEL(resultPseudo), "Pseudo OK");
+        gtk_label_set_text(GTK_LABEL(resultPseudo), "Email OK");
         strcpy(logPseudo, (char *)gtk_entry_get_text(GTK_ENTRY(inputname)));
 
     }
@@ -76,8 +76,8 @@ void windowConnect(int argc, char **argv, char *pwd, char *psd, char *window_siz
     // ajout du champ de gestion des erreurs
     error = gtk_label_new(" ");
     gtk_grid_attach(GTK_GRID(grid), error, 1, 0, 1, 1);
-    if (tmpGtkError==1)gtk_label_set_text(GTK_LABEL(error), "Pseudo déjà utilisé");
-    if (tmpGtkError==2)gtk_label_set_text(GTK_LABEL(error), "Mot de passe ou pseudo incorrect");
+    if (tmpGtkError==1)gtk_label_set_text(GTK_LABEL(error), "Email déjà utilisé");
+    if (tmpGtkError==2)gtk_label_set_text(GTK_LABEL(error), "Mot de passe ou Email incorrect");
 
     // creation du label Email
     name = gtk_label_new("Email :");

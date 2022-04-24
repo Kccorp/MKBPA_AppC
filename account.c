@@ -50,11 +50,11 @@ void createUrl(char *url, char *pwd, char *hashedPwd){
 void check_password(char *pwd, char *checkPwd, int *connected){
     char url[150];
     createUrl(url, pwd, checkPwd);
-    get_page(url, "../test.html");
+    get_page(url, "../hashVerif.html");
 
-    switch (getResultApi("../test.html")) {
-        case 0:printf("Password is correct\n");*connected=1;break;
-        case 1:printf("Password is incorrect\n");*connected=0;break;
+    switch (getResultApi("../hashVerif.html")) {
+        case 0:*connected=1;break;
+        case 1:*connected=0;break;
         default:exit(-1);break;
     }
 }
