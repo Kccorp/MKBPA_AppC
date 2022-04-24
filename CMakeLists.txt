@@ -3,7 +3,7 @@ project(OpenWeatherMap C)
 
 set(CMAKE_C_STANDARD 99)
 
-add_executable(OpenWeatherMap test.c)
+add_executable(OpenWeatherMap main.c)
 
 find_package (CURL)
 if (CURL_FOUND)
