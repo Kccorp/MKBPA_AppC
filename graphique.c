@@ -1,4 +1,5 @@
 void verify_password(char *password, int *verif);
+void remove_n(char *chaine, int size);
 
 static GtkWidget *inputname;
 static GtkWidget *inputpassword;
@@ -17,6 +18,7 @@ void newUser(GtkWidget *widget, gpointer user_data){
 
 
     verify_password((char *)gtk_entry_get_text(GTK_ENTRY(inputpassword)), &checkPassword);
+//    remove_n((char *)gtk_entry_get_text(GTK_ENTRY(inputpassword)), 100);
 
     if (strlen((char *)gtk_entry_get_text(GTK_ENTRY(inputname))) > 25 ||
         strlen((char *)gtk_entry_get_text(GTK_ENTRY(inputname))) <= 0 ||
@@ -47,6 +49,7 @@ void newUser(GtkWidget *widget, gpointer user_data){
         strcpy(logPassword, (char *)gtk_entry_get_text(GTK_ENTRY(inputpassword)));
 
     }
+
 
     if (check == 1 && checkPassword == 1){
         gtk_window_close(widget);
@@ -140,18 +143,18 @@ void windowWeather(int argc, char **argv, char *icon, char *temperature, char *d
     // Affiche de l'icone
     iconPath = g_strconcat("../assets/icons/", icon, ".png", NULL);
     displayIcon = gtk_image_new_from_file(iconPath);
+//    gtk_widget_set_halign(displayIcon, GTK_ALIGN_CENTER);
     gtk_grid_attach(GTK_GRID(grid), displayIcon, 5, 0, 1, 1);
-    // center the widget
-    gtk_widget_set_halign(displayIcon, GTK_ALIGN_CENTER);
+
 
     // Affichage de la temperature
-
     displayTemperature = gtk_label_new(g_strconcat(temperature, "°C", NULL));
     gtk_grid_attach(GTK_GRID(grid), displayTemperature, 2, 5, 1, 1);
 
     // creation du label password
     displayDescribe = gtk_label_new(describe);
     gtk_grid_attach(GTK_GRID(grid), displayDescribe, 10, 5, 1, 1);
+
     //change the font size
     PangoFontDescription *font_desc;
     font_desc = pango_font_description_from_string("Sans Bold 14");

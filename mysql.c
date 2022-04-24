@@ -1,8 +1,9 @@
-#define INSERT_WEATHER "INSERT INTO lotte_weather (date, temperature, icon, description) VALUES (now(), ?,  ?, ?)"
 #define SELECT_USER "SELECT email, password from lotte_user"
+#define SELECT_WEATHER "SELECT temperature, icon, description FROM lotte_weather ORDER BY idWeather DESC LIMIT 1"
 
-MYSQL_STMT* addWeather = NULL;
+
 MYSQL_STMT* selectUser = NULL;
+MYSQL_STMT* selectWeather = NULL;
 
 void err_exit(char* s);
 
@@ -24,18 +25,15 @@ void connectBD (int *state, MYSQL *conn){
 
 void initPrepareSql (MYSQL *conn){
     int prepare;
-    unsigned int count;
-
-    addWeather = mysql_stmt_init(conn);
-    if (addWeather == NULL) err_exit("init stmt failed");
-    prepare = mysql_stmt_prepare(addWeather, INSERT_WEATHER, strlen(INSERT_WEATHER));
-    if (prepare != 0) err_exit("prepare stmt failed");
-    count = mysql_stmt_param_count(addWeather);
-    //printf("Il y a %d parametre dans l'sql preparé Insert User\n", count);
 
     selectUser = mysql_stmt_init(conn);
     if (selectUser == NULL) err_exit("init stmt failed");
     prepare = mysql_stmt_prepare(selectUser, SELECT_USER, strlen(SELECT_USER));
+    if (prepare != 0) err_exit("prepare stmt failed");
+
+    selectWeather = mysql_stmt_init(conn);
+    if (selectWeather == NULL) err_exit("init stmt failed");
+    prepare = mysql_stmt_prepare(selectWeather, SELECT_WEATHER, strlen(SELECT_WEATHER));
     if (prepare != 0) err_exit("prepare stmt failed");
 }
 
@@ -105,47 +103,72 @@ void showUser (MYSQL *conn, char *pseudoSaisie, char *password){
         printf("metaData clear");
 }
 
-void insertWeather(double temperature, char* icon, char* description){
-    MYSQL_BIND bind[3];
+void showWeather (MYSQL *conn, double *temperature, char *icon, char *weather){
 
-    unsigned int array_size = 1; /* the number of row to insert? */
-//    unsigned long temperatureLen = strlen(temperature);
-    unsigned long iconLen = strlen(icon);
-    unsigned long descriptionLen = strlen(description);
+    char strIcon[25];
+    char strWeather[150];
+    double degre;
+    unsigned long lenIcon;
+    unsigned long lenWeather;
     int result;
+    int row;
+    MYSQL_BIND bind[3]; /*used to get result, not to provide parameters*/
+    MYSQL_FIELD *fields;
+    MYSQL_RES *metaData;
 
-    memset(bind, 0, sizeof(MYSQL_BIND)*3);
+    metaData = mysql_stmt_result_metadata(selectWeather);
+    if (metaData == NULL) err_exit("impossible d'obtenir les metadonnées");
 
-    //insert double value for temperature in bind[0]
+    fields = mysql_fetch_fields(metaData);
+    memset(bind,0,sizeof(MYSQL_BIND)*3);
+
+
     bind[0].buffer_type = MYSQL_TYPE_DOUBLE;
-    bind[0].buffer = &temperature;
-    bind[0].buffer_length = sizeof(temperature);
+    bind[0].buffer = temperature;
+    bind[0].buffer_length = sizeof(double);
+    bind[0].length = NULL;
 
-//    bind[0].buffer_type = MYSQL_TYPE_DOUBLE;
-//    bind[0].buffer = temperature;
-//    bind[0].buffer_length = strlen(temperature);
-//    bind[0].length = &temperatureLen;
-
-    bind[1].buffer_type = MYSQL_TYPE_STRING;
+    bind[1].buffer_type = fields[1].type;
     bind[1].buffer = icon;
     bind[1].buffer_length = strlen(icon);
-    bind[1].length = &iconLen;
+    bind[1].length = &lenIcon;
 
-    bind[2].buffer_type = MYSQL_TYPE_STRING;
-    bind[2].buffer = description;
-    bind[2].buffer_length = strlen(description);
-    bind[2].length = &descriptionLen;
+    bind[2].buffer_type = fields[2].type;
+    bind[2].buffer = weather;
+    bind[2].buffer_length = 50;
+    bind[2].length = &lenWeather;
 
-    mysql_stmt_attr_set(addWeather, 2, &array_size);
-    result = mysql_stmt_bind_param(addWeather, bind);
-    if (result != 0) err_exit("bind stmt insert failed");
-    result = mysql_stmt_execute(addWeather);
-    if (result != 0) err_exit("execute stmt insert failed");
+
+    result = mysql_stmt_bind_result(selectWeather, bind);
+    if (result!=0) err_exit("Le stockage des données à échoué");
+
+    result = mysql_stmt_execute(selectWeather);
+    if (result!=0) err_exit("l'éxecution du select à échoué");
+
+    row = 0;
+    while(1){
+        row++;
+        result = mysql_stmt_fetch(selectWeather);
+        if (result == MYSQL_NO_DATA){
+            //printf("-- FIN --\n");
+            break;
+        }
+        if (result != 0){
+            printf("Il y a eu une erreur code:%d\n", result);
+            printf("error str is %s \n", mysql_error(conn));
+            break;
+        }
+    }
+
+    mysql_free_result(metaData);
+    if (metaData==NULL)
+        printf("metaData clear");
 }
 
+
 void closePreparedStatements(){
-    mysql_stmt_close(addWeather);
     mysql_stmt_close(selectUser);
+    mysql_stmt_close(selectWeather);
 }
 
 void closeDb(MYSQL* dbconn){

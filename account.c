@@ -4,11 +4,24 @@ void get_page(char *url, char *file_name);
 int getResultApi(char *filename);
 
 
-void main_menu (int *choice){
-    while (*choice > 3 || *choice <= 0 ){
-        printf("\n1)Se connecter\n2)S'inscrire\n3)Exit\n");
-        scanf("%d", choice);
-        vider_buffer();
+int getResultApi(char *filename){
+    char line[25];
+    FILE *f = fopen(filename, "r");
+    if (f == NULL)
+    {
+        printf("Error opening file!\n");
+        exit(1);
+    }
+
+    fgets(line, 25, f);
+    fclose(f);
+    if(strcmp(line, "Password is correct") == 0 ) {
+        return 0;
+    }
+    else if(strcmp(line, "Password is incorrect") == 0 ) {
+        return 1;
+    } else {
+        return -1;
     }
 }
 

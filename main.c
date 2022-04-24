@@ -3,7 +3,7 @@
 #include <string.h>
 #include <json-c/json.h>
 #include <mysql/mysql.h>
-#include "mysql.c"
+#include "mysql_api.c"
 
 
 void get_page(char *url, char *file_name){
@@ -56,7 +56,6 @@ void parseJson(char *file_name,double *t, char *w, char *i){
     *t = atof(p);
     //for free the memory
     json_object_put(parsed_json);
-
 }
 
 int main() {
@@ -69,23 +68,20 @@ int main() {
     get_page( "https://api.openweathermap.org/data/2.5/weather?q=Lyon&appid=a74be1f8fd103c83ce4e4c545a33c915&units=metric&lang=fr&mode=json", filename ) ;
     parseJson(filename,&temp,weather,iconId);
 
-    printf("weather : %s\n", weather);
-    printf("iconId : %s\n", iconId);
-    printf("how hot i am ? : %.2lf\n", temp);
-
     MYSQL *conn= mysql_init(NULL);/*Create database link pointer*/
 
-    int state = 0, connected = 0;
-    char email[145];
+    int state = 0;
     connectBD(&state, conn);/*Connect to database*/
     initPrepareSql(conn);/*Prepare sql*/
 
-    //insert the data into the database
-    insertWeather(temp, iconId, weather);
-
-
+    if (state == 1){
+        //insert the data into the database
+        insertWeather(temp, iconId, weather);
+        closeDb(conn);
+    }
 
     free(weather);
     free(iconId);
+
     return 0;
 }
