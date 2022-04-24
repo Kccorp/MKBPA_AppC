@@ -6,14 +6,10 @@ static GtkWidget *resultPseudo;
 static GtkWidget *resultPassword;
 static GtkWidget *error;
 
-
-
 static char logPseudo [25];
 static char logPassword [100];
 
 static int tmpGtkError = 0;
-
-void closeWindow( GtkWidget *widget, gpointer user_data);
 
 void newUser(GtkWidget *widget, gpointer user_data){
     char buffer[25] ;
@@ -58,7 +54,7 @@ void newUser(GtkWidget *widget, gpointer user_data){
 }
 
 void windowConnect(int argc, char **argv, char *pwd, char *psd, char *window_size_x, char *window_size_y) {
-    GtkWidget *window, *grid, *login, *newAccount;
+    GtkWidget *window, *grid, *login;
     gtk_init(&argc, &argv);
 
     GtkWidget *name;
@@ -106,17 +102,9 @@ void windowConnect(int argc, char **argv, char *pwd, char *psd, char *window_siz
     g_signal_connect(login, "clicked", G_CALLBACK(newUser), NULL);
     gtk_grid_attach(GTK_GRID(grid), login, 2, 7, 1, 1);
 
-    //creation du bouton de creation de compte
-    newAccount = gtk_link_button_new_with_label("https://google.fr", "S'inscrire");
-
-    //g_signal_connect(login, "clicked", G_CALLBACK(newUser), NULL);
-    gtk_grid_attach(GTK_GRID(grid), newAccount, 4, 7, 1, 1);
-
 
     gtk_widget_show_all(window);
     gtk_main();
-
-    //printf("\nPseudo : %s\nMot de passe : %s",logPseudo, logPassword);
 
     strcpy(pwd, logPassword);
     strcpy(psd, logPseudo);

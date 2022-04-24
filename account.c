@@ -47,44 +47,14 @@ void check_password(char *pwd, char *checkPwd, int *connected){
 }
 
 void connectUser (int *connected, MYSQL *conn, int argc, char **argv, char *pseudo, char *window_size_x, char *window_size_y){
-    int choice;
     char pwd[100];
     char checkPwd[100]={0};
-    int i=0;
 
-    //choix entre connexion/inscription
-    main_menu(&choice);
-
-    if (choice == 1){//Choisir de se connecter
-
-        do {
-            windowConnect(argc, argv, pwd, pseudo, window_size_x, window_size_y);
-            showUser (conn, pseudo, checkPwd);
-            check_password(pwd, checkPwd, connected);
-            if(*connected==0)tmpGtkError=2;
-        } while (*connected == 0);
-
-
-    } else if (choice == 2) {//Choisir de S'inscrire
-        int uniqueName=0;
-
-        //demande à l'utilisateur ses infos de comtpes et vérifie si un pseudo identique existe déjà
-        do {
-            windowConnect(argc, argv, pwd, pseudo, window_size_x, window_size_y);
-            remove_n(pseudo, 25);
-            verifUser(conn,pseudo, &uniqueName);
-            if(uniqueName!=0)tmpGtkError=1;
-        } while (pseudo[0]=='\0' || uniqueName !=1);
-
-
-        //fait l'injection dans la db
-        insertUser(pseudo, pwd);
-        *connected = 1;
-        printf("\nInscription validée - vous êtes connecté\n");
-
-    } else if (choice == 3) {
-        printf("\nGoodbye");
-        exit(0);
-    }
+    do {
+        windowConnect(argc, argv, pwd, pseudo, window_size_x, window_size_y);
+        showUser (conn, pseudo, checkPwd);
+        check_password(pwd, checkPwd, connected);
+        if(*connected==0)tmpGtkError=2;
+    } while (*connected == 0);
 }
 
